@@ -29,7 +29,7 @@ var (
 func initDB() {
 	var err error
 
-	connStr := "host=localhost port=5432 user=postgres password=1234 dbname=toolgo_dev sslmode=disable"
+	connStr := "host=tool-go-db.ch0uy8q4olbz.us-east-2.rds.amazonaws.com port=5432 user=postgres password=cx4OFo8eJ6TzKoofAwGrBmmGk dbname=tool-go-db sslmode=disable"
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("Erro ao conectar ao banco de dados:", err)
