@@ -3,21 +3,24 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
-      - aws --version
-      - $(aws ecr get-login --no-include-email --region us-east-1)
-      - REPOSITORY_URI=123456789012.dkr.ecr.us-east-1.amazonaws.com/toolgo-tracker
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo Logando no Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - echo Buildando a imagem Docker...
+      - docker build -t toolgo-tracker .
+      - docker tag toolgo-tracker:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/toolgo-tracker:latest
   post_build:
     commands:
-      - echo Pushing the Docker image...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"toolgo-tracker","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - echo Enviando imagem para o ECR...
+      - docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/toolgo-tracker:latest
+      - echo Criando arquivo imagedefinitions.json...
+      - |
+        echo '[{
+          "name": "toolgo-tracker",
+          "imageUri": "123456789012.dkr.ecr.us-east-1.amazonaws.com/toolgo-tracker:latest"
+        }]' > imagedefinitions.json
 
 artifacts:
-  files: imagedefinitions.json
+  files:
+    - imagedefinitions.json
