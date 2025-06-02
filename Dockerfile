@@ -10,7 +10,7 @@ RUN go mod download
 COPY . ./
 
 # Binário estático compatível com Alpine
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .
 
 # Etapa 2: imagem final leve com Alpine
 FROM alpine:latest
