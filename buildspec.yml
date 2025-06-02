@@ -24,7 +24,7 @@ phases:
       - echo Criando arquivo imagedefinitions.json...
       - |
         echo '[{
-          "name": "tool-go-tracking",
+          "name": "toolgo-tracker",
           "imageUri": "166534940158.dkr.ecr.us-east-2.amazonaws.com/tool-go-tracking:latest"
         }]' > imagedefinitions.json
 
