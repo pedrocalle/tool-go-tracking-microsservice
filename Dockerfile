@@ -7,20 +7,20 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 
-COPY . .
+COPY . ./
 
-# Compila para Linux com arquitetura compatível
-RUN GOOS=linux GOARCH=amd64 go build -o main .
+# Binário estático compatível com Alpine
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
 
-# Etapa 2: imagem final
+# Etapa 2: imagem final leve com Alpine
 FROM alpine:latest
 
-WORKDIR /app
+WORKDIR /root/
 
 COPY --from=builder /app/main .
 
-# Confirma que o binário é executável
-RUN chmod +x main
+# Marca como executável
+RUN chmod +x ./main
 
 EXPOSE 8080
 
