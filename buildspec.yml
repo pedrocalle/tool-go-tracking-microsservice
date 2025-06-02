@@ -1,24 +1,31 @@
 version: 0.2
-
+nv:
+  variables:
+    ECR_REPOSITORY: "tool-go" # Nome do repositório no ECR
+    AWS_DEFAULT_REGION: "us-east-2" # Sua região AWS
 phases:
   pre_build:
     commands:
-      - echo Logando no Amazon ECR...
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
+      - echo "Setting variables..."
+      - export AWS_ACCOUNT_ID=$(echo $CODEBUILD_BUILD_ARN | awk -F ':' '{print $5}')
+      - export ECR_MAIN_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+      - export ECR_IMAGE_URI="${ECR_MAIN_URI}/${ECR_REPOSITORY}:latest"
+      - echo "Logging into ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_MAIN_URI
+
   build:
     commands:
       - echo Buildando a imagem Docker...
-      - docker build -t tool-go-tracking .
-      - docker tag toolgo-tracker:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/toolgo-tracker:latest
+      - docker build -t "${ECR_IMAGE_URI}" .
   post_build:
     commands:
       - echo Enviando imagem para o ECR...
-      - docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/toolgo-tracker:latest
+      - docker push "${ECR_IMAGE_URI}"
       - echo Criando arquivo imagedefinitions.json...
       - |
         echo '[{
-          "name": "toolgo-tracker",
-          "imageUri": "123456789012.dkr.ecr.us-east-1.amazonaws.com/toolgo-tracker:latest"
+          "name": "tool-go-tracking",
+          "imageUri": "${ECR_IMAGE_URI}"
         }]' > imagedefinitions.json
 
 artifacts:
