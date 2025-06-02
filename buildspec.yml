@@ -25,7 +25,7 @@ phases:
       - |
         echo '[{
           "name": "tool-go-tracking",
-          "imageUri": "${ECR_IMAGE_URI}"
+          "imageUri": "166534940158.dkr.ecr.us-east-2.amazonaws.com/tool-go-tracking:latest"
         }]' > imagedefinitions.json
 
 artifacts:
