@@ -1,7 +1,7 @@
 version: 0.2
-nv:
+env:
   variables:
-    ECR_REPOSITORY: "tool-go" # Nome do repositório no ECR
+    ECR_REPOSITORY: "tool-go-tracking" # Nome do repositório no ECR
     AWS_DEFAULT_REGION: "us-east-2" # Sua região AWS
 phases:
   pre_build:
